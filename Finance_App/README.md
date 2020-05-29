@@ -1,4 +1,4 @@
-# kartiksir
+# Finance App
 
 A new Flutter application.
 
