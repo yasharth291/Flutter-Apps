@@ -1,412 +1,253 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kartiksir/LoanPage.dart';
-import 'package:kartiksir/Cards.dart';
-import 'package:kartiksir/Insurance.dart';
+import 'package:kartiksir/home.dart';
 import 'package:kartiksir/Fade.dart';
-import 'package:kartiksir/investment.dart';
-
-void main() => runApp(App());
-
-class App extends StatelessWidget {
+import 'package:dio/dio.dart';
+import 'package:kartiksir/ghome.dart';
+void main()=>runApp(
+  MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Signin(),
+    routes: <String, WidgetBuilder>{
+      '/a' : (BuildContext context) => MyHomePage(),
+      '/b' : (BuildContext context) => MyHomePages(),
+    },
+  ),
+);
+class Signin extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
-      routes: <String, WidgetBuilder> {
-        '/a': (BuildContext context) => MyHomePage(),
-        '/b': (BuildContext context) => Loan(),
-        '/c': (BuildContext context) => Cardol(),
-        '/d': (BuildContext context) => ardol(),
-        '/e': (BuildContext context) => Tardol(),
+  _State createState() => _State();
+}
+
+class _State extends State<Signin> {
+
+  String s;
+  String ident;
+
+  createAlbum(Map<String, dynamic> body) async{
+    var dio = Dio();
+    try {
+      FormData formData = new FormData.fromMap(body);
+      var response = await dio.post("http://paisecentre.in/pc/web/index.php?r=jflipgradtest/verifycode", data: formData);
+      setState(() {
+        ident = response.data['status'].toString();
+      });
+      if(ident == "success") {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => App()));
+      }
+      else{
+        alreti();
+      }
+    }
+    catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> alreti() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Verification Fail'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Reject'),
+                Icon(
+                  Icons.close,
+                  color: Colors.red[800],
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('next'),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Signin()));
+              },
+            ),
+          ],
+        );
       },
     );
   }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  Offset _offset = Offset(0,0);
-  GlobalKey globalKey = GlobalKey();
-  List<double> limits = [];
-
-  bool isMenuOpen = false;
-
-
-  @override
-  void initState() {
-    limits= [0, 0, 0, 0, 0, 0];
-    WidgetsBinding.instance.addPostFrameCallback(getPosition);
-    super.initState();
-  }
-
-  getPosition(duration){
-    RenderBox renderBox = globalKey.currentContext.findRenderObject();
-    final position = renderBox.localToGlobal(Offset.zero);
-    double start = position.dy;
-    double contLimit = position.dy + renderBox.size.height ;
-    double step = (contLimit-start)/5;
-    limits = [];
-    for (double x = start; x <= contLimit; x = x + step) {
-      limits.add(x);
-    }
-    setState(() {
-      limits = limits;
-    });
-
-  }
-
-  double getSize(int x){
-    double size  = (_offset.dy > limits[x] && _offset.dy < limits[x + 1]) ? 25 : 20;
-    return size;
-  }
-
 
   @override
   Widget build(BuildContext context) {
-
-    Size mediaQuery = MediaQuery.of(context).size;
-    double sidebarSize = mediaQuery.width * 0.65;
-    double menuContainerHeight = mediaQuery.height/1.32;
-
-    return SafeArea(
-        child: Scaffold(
-          body:  Stack(
-               children: <Widget>[
-                Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: <Widget>[
-                  Container(
-               height: 200,
-                    child: Stack(
-                 children: <Widget>[
-                      Positioned(
-                        child: FadeAnimation(
-                       1,
-                         Container(
-                         decoration: BoxDecoration(
-                           image: DecorationImage(
-                             fit: BoxFit.cover,
-                             image: AssetImage("assets/pngtree-finance-app-page-geometric-background-banner-image_157396.jpg"),
-                           ),
-                         ),
-                       ),
-                     ),
-                   ),
-                 ],
-               ),
-             ),
-                SizedBox(
-              height: 20,
-                ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 20.0),
-                        height: 150.0,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                width: 160.0,
-                                  child: Image.asset("assets/WhatsApp Image 2020-05-29 at 1.38.06 AM.jpeg"),
-
+    return Scaffold(
+      body: SingleChildScrollView(
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: 200,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      child: FadeAnimation(
+                        1,
+                        Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage("assets/pngtree-finance-app-page-geometric-background-banner-image_157396.jpg"),
                             ),
-                                Container(
-                                  width: 160,
-                                  child: Image.network("http://hiddenmasterminds.com/web/uploads_student/download.jpeg"),
-                                  padding: EdgeInsets.all(10.0),
-                                ),
-                              Container(
-                                padding: EdgeInsets.all(10.0),
-                                width: 160.0,
-                                child: Image.asset("assets/WhatsApp Image 2020-05-29 at 1.38.06 AM (1).jpeg"),
-                            ),
-                              Container(
-                                padding: EdgeInsets.all(10.0),
-                                width: 160.0,
-                                child: Image.asset("assets/WhatsApp Image 2020-05-29 at 1.38.06 AM (2).jpeg"),
-                            ),
-                              Container(
-                                padding: EdgeInsets.all(10.0),
-                                width: 160.0,
-                                child: Image.asset("assets/WhatsApp Image 2020-05-29 at 1.38.07 AM (1).jpeg"),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(10.0),
-                                width: 160.0,
-                                child: Image.asset("assets/WhatsApp Image 2020-05-29 at 1.38.07 AM.jpeg"),
-                            ),
-
-                ],
-
+                          ),
                         ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Center(
+                child: FadeAnimation(
+                  1,
+                  Container(
+                    width: 250,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage("assets/logo.png"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Center(
+                child: Text(
+                  "ENTER THE MEMBER ID HERE",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Center(
+               child: Container(
+                width: 250,
+                padding: EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.black26,
+                    ),
+                    right: BorderSide(
+                      color: Colors.black26,
+                    ),
+                    left: BorderSide(
+                      color: Colors.black26,
+                    ),
+                    top: BorderSide(
+                      color: Colors.black26,
+                    ),
+                  ),
 
+                  ),
+                child: TextField(
+                  onChanged: (String text3){
+                    s = text3;
+                  },
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "Member ID",
+                    hintStyle: TextStyle(color: Colors.black26),
+                  ),
+                ),
+               ),
+              ),
+              SizedBox(
+                height: 60,
+              ),
 
-          ],
-        ),
-    ),
-                 Center(
-                   child: FadeAnimation(1,
-                     Padding(
-                       child: Text(
-                         "WELCOME TO PAISE CENTRE",
-                         style: TextStyle(
-                           fontSize: 15,
-                           color: Colors.black87,
-                           fontWeight: FontWeight.bold,
+              FadeAnimation(
+                1,
+                Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: 260,
+                    child: RaisedButton(
+                      onPressed: () {
+                        var map = new Map<String, dynamic>();
+                        map['code'] = s;
+                        createAlbum(map);
 
-                         ),
-                       ),
-                       padding: EdgeInsets.all(50.0),
+                      },
 
-                     ),
-                   ),
-                 ),
-                 Center(
-                   child: FadeAnimation(
-                     1,
-                     Container(
-                       width: sidebarSize,
-                       height: 50,
-                       decoration: BoxDecoration(
-                         image: DecorationImage(
-                           fit: BoxFit.cover,
-                           image: AssetImage("assets/logo.png"),
-                         ),
-                       ),
-                     ),
-                   ),
-                 ),
-        ]
-             ),
-                 AnimatedPositioned(
-                   duration: Duration(milliseconds: 1500),
-                   left: isMenuOpen?0: -sidebarSize+20,
-                   top: 0,
-                   curve: Curves.elasticOut,
-                   child: SizedBox(
-                     width: sidebarSize,
-                     child: GestureDetector(
-                       onPanUpdate: (details){
-                         if(details.localPosition.dx <=sidebarSize){
-                           setState(() {
-                             _offset = details.localPosition;
-                           });
-                         }
-                         if(details.localPosition.dx>sidebarSize-20 && details.delta.distanceSquared>2){
-                           setState(() {
-                             isMenuOpen = true;
-                           });
-                         }
-                       },
-                       onPanEnd: (details){
-                         setState(() {
-                           _offset = Offset(0,0);
-                         });
-                       },
-                       child: Stack(
-                         children: <Widget>[
-                           CustomPaint(
-                             size: Size(sidebarSize, mediaQuery.height),
-                             painter: DrawerPainter(offset: _offset),
-                           ),
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(
+                          color: Color.fromRGBO(49, 39, 79, 1),
+                        ),
+                      ),
+                      child: Text(
+                        "ENTER",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              FadeAnimation(
+                1,
+                Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: 260,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => Mapp()));
+                      },
 
-                           Container(
-                             color: Colors.lightBlueAccent[100],
-                             height: mediaQuery.height,
-                             width: sidebarSize,
-                             child: Column(
-                               mainAxisAlignment: MainAxisAlignment.center,
-                               crossAxisAlignment: CrossAxisAlignment.start,
-                               mainAxisSize: MainAxisSize.max,
-                               children: <Widget>[
-                                 Container(
-                                   color: Colors.lightBlueAccent[100],
-                                   child: Center(
-                                     child: Column(
-                                       children: <Widget>[
-                                         Image.asset("assets/intro (2).png",width: sidebarSize,),
-                                       ],
-                                     ),
-                                   ),
-                                 ),
-                                 Divider(thickness: 1,),
-                                 Container(
-                                   key: globalKey,
-                                   width: double.infinity,
-                                   height: menuContainerHeight,
-                                   child: Column(
-                                     children: <Widget>[
-                                       MyButton(
-                                         text: "HOME",
-                                         iconData: Icons.home,
-                                         textSize: getSize(0),
-                                         height: (menuContainerHeight)/10,
-                                         num: 1,
-                                       ),
-                                       MyButton(
-                                         text: "LOAN",
-                                         iconData: Icons.attach_money,
-                                         textSize: getSize(1),
-                                         height: (menuContainerHeight)/10,
-                                         num: 2,
-                                       ),
-                                       MyButton(
-                                         text: "CARDS",
-                                         iconData: Icons.credit_card,
-                                         textSize: getSize(2),
-                                         height: (mediaQuery.height/2)/10,
-                                         num: 3,
-                                       ),
-                                       MyButton(
-                                         text: "INSURANCE",
-                                         iconData: Icons.monetization_on,
-                                         textSize: getSize(3),
-                                         height: (menuContainerHeight)/10,
-                                         num: 4,
-                                       ),
-                                       MyButton(
-                                         text: "INVESTMENT",
-                                         iconData: Icons.strikethrough_s,
-                                         textSize: getSize(4),
-                                         height: (menuContainerHeight)/10,
-                                         num: 5,
-                                       ),
-                                     ],
-                                   ),
-                                 )
-                               ],
-                             ),
-                           ),
-                           AnimatedPositioned(
-                             duration: Duration(milliseconds: 400),
-                             right: (isMenuOpen)?10:sidebarSize,
-                             bottom: 30,
-                             child: IconButton(
-                               enableFeedback: true,
-                               icon: Icon(Icons.keyboard_backspace,color: Colors.black45,size: 30,),
-                               onPressed: (){
-                                 this.setState(() {
-                                   isMenuOpen = false;
-                                 });
-                               },),
-                           )
-                         ],
-                       ),
-                     ),
-                   ),
-                 ),
-               ],
-        ),
-        ),
-    );
-  }
-}
-
-
-
-class MyButton extends StatelessWidget {
-  final String text;
-  final IconData iconData;
-  final double textSize;
-  final double height;
-  final int num;
-
-  MyButton({this.text, this.iconData, this.textSize,this.height,this.num});
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return MaterialButton(
-      height: height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Icon(
-            iconData,
-            color: Colors.black45,
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            text,
-            style: TextStyle(color: Colors.black, fontSize: textSize),
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(
+                          color: Color.fromRGBO(49, 39, 79, 1),
+                        ),
+                      ),
+                      child: Text(
+                        "LOGIN AS GUEST",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
-      onPressed: () {
-        if (num == 1) {
-          Navigator.pushNamed(context, "/a");
-        }
-        else if (num == 2) {
-          Navigator.pushNamed(context, "/b");
-        }
-        else if (num == 3) {
-          Navigator.pushNamed(context, "/c");
-        }
-        else if (num == 4) {
-          Navigator.pushNamed(context, "/d");
-        }
-        else if (num == 5) {
-          Navigator.pushNamed(context, "/e");
-        }
-      },
+      ),
     );
   }
-}
-
-
-
-
-class DrawerPainter extends CustomPainter{
-
-  final Offset offset;
-
-  DrawerPainter({this.offset});
-
-  double getControlPointX(double width){
-    if(offset.dx == 0){
-      return width;
-    } else {
-      return offset.dx>width?offset.dx:width+75;
-    }
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()..color = Colors.white..style = PaintingStyle.fill;
-    Path path = Path();
-    path.moveTo(-size.width, 0);
-    path.lineTo(size.width, 0);
-    path.quadraticBezierTo(getControlPointX(size.width), offset.dy, size.width, size.height);
-    path.lineTo(-size.width, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
-    return true;
-  }
-
 }
